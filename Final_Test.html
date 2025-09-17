@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X-O Game</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        #game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+            border: 3px solid #333;
+            background-color: #333;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            background-color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 4em;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        .cell:hover {
+            background-color: #e0e0e0;
+            transform: scale(1.03);
+        }
+
+        .cell.x {
+            color: #e74c3c;
+        }
+
+        .cell.o {
+            color: #3498db;
+        }
+
+        #status-display {
+            margin-top: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        #restart-button {
+            margin-top: 20px;
+            padding: 12px 24px;
+            font-size: 1.1em;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            background-color: #2ecc71;
+            color: #fff;
+            transition: background-color 0.3s, transform 0.1s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #restart-button:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <h1>لعبة X-O</h1>
+    <div id="game-board">
+        <div class="cell" data-index="0"></div>
+        <div class="cell" data-index="1"></div>
+        <div class="cell" data-index="2"></div>
+        <div class="cell" data-index="3"></div>
+        <div class="cell" data-index="4"></div>
+        <div class="cell" data-index="5"></div>
+        <div class="cell" data-index="6"></div>
+        <div class="cell" data-index="7"></div>
+        <div class="cell" data-index="8"></div>
+    </div>
+    <div id="status-display"></div>
+    <button id="restart-button">إعادة اللعبة</button>
+
+    <script>
+
+        let GameActive = true;
+        let my_Boxes = document.querySelectorAll(".cell");
+        let StartGame = document.querySelector("#restart-button");
+        let status = document.getElementById("status-display");
+        let Turn = "X";
+
+        const winningMessage = () => `اللاعب ${Turn} فاز!`;
+        const drawMessage = () => `تعادل!`;
+        const currentPlayerTurn = () => `دور اللاعب ${Turn}`;
+       
+        status.innerHTML = `دور اللاعب ${Turn}`
+
+           const winningConditions = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6]
+        ];
+           
+        
+
+
+        document.addEventListener("click" , (e) => {
+    
+        if(GameActive){
+
+            if(e.target.classList.contains("cell") && e.target.innerHTML === ""){
+
+            const Box_Game = e.target.parentNode;
+ 
+                e.target.innerHTML = Turn;
+                let NewTuen = Turn === "X" ? "O" : "X";
+                Turn = NewTuen;
+                status.innerHTML = `دور اللاعب ${Turn}`;
+                ChickWinner();
+                
+            }
+
+        }
+          
+            
+
+          }
+
+        )
+
+        function ChickWinner(){
+
+         
+         for(let i = 0; i < winningConditions.length; i++){
+
+         let conditon = winningConditions[i];
+
+         let a = my_Boxes[conditon[0]].innerHTML;
+         let b = my_Boxes[conditon[1]].innerHTML;
+         let c = my_Boxes[conditon[2]].innerHTML;
+         
+         if(a === '' || b === '' || c === ''){
+
+         continue;
+
+         }
+
+         if(a === b && b === c){
+
+           for(let i = 0; i < 3; i++){
+
+            my_Boxes[conditon[i]].style.cssText = "background-color: green; color: white"
+
+           }
+           let NewTuen = Turn === "X" ? "O" : "X";
+           Turn = NewTuen;
+           status.innerHTML = `دور اللاعب ${Turn}`;
+           status.innerHTML = winningMessage(Turn);
+           GameActive = false;
+           break;
+
+         } 
+
+
+
+
+         }
+
+          let roundDraw = [...my_Boxes].every(cell => cell.innerHTML !== "");
+          if (roundDraw && GameActive !== false) {
+          status.innerHTML = "تعادل!";
+          
+          }
+
+        }
+
+
+        function StartOver(){
+
+        let Cont = document.querySelector("#game-board");
+      
+
+      
+        
+
+        for(let i = 0; i < Cont.children.length; i++){
+
+           Cont.children[i].innerHTML = "";
+           Cont.children[i].style.cssText = "";
+           
+
+        }
+
+       Turn = "X";
+       status.innerHTML = `دور اللاعب ${Turn}`
+       GameActive = true;
+
+       
+
+
+        }
+
+      
+        StartGame.addEventListener("click" , () => StartOver())
+       
+
+
+    </script>
+</body>
+</html>
